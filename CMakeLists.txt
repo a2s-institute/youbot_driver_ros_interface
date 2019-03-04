@@ -38,13 +38,9 @@ install(DIRECTORY launch/
 
 ## run sudo command to enable direct network access
 ## disabled here by default because it is set by Debian postinst command
+option(${PROJECT_NAME}_USE_SETCAP "Set permissions to access ethernet interface without sudo" OFF)
 
-option(${PROJECT_NAME}_USE_SETCAP "Set permissions to access ethernet interface without sudo" ON)
-
-set(SUDO_COMMAND gksudo)
-if($ENV{USE_NORMAL_SUDO})
-    set(SUDO_COMMAND sudo)
-endif()
+set(SUDO_COMMAND sudo)
 
 if(${PROJECT_NAME}_USE_SETCAP)
     add_custom_command(TARGET youbot_driver_ros_interface POST_BUILD
