@@ -41,16 +41,21 @@
 #define YOUBOTCONFIGURATION_H_
 
 /* ROS includes */
-#include "ros/ros.h"
-#include "tf/transform_broadcaster.h"
+#include "rclcpp/rclcpp.hpp"
+#include "std_srvs/srv/empty.hpp"
+#include "geometry_msgs/msg/twist.hpp"
+#include "nav_msgs/msg/odometry.hpp"
+#include "sensor_msgs/msg/joint_state.hpp"
+#include "tf2_ros/transform_broadcaster.h"
+#include "rclcpp_action/rclcpp_action.hpp"
+#include "control_msgs/action/follow_joint_trajectory.hpp"
+#include "brics_actuator/msg/joint_positions.hpp"
+#include "brics_actuator/msg/joint_velocities.hpp"
+#include "diagnostic_msgs/msg/diagnostic_array.hpp"
 
 /* OODL includes */
 #include <youbot_driver/youbot/YouBotBase.hpp>
 #include <youbot_driver/youbot/YouBotManipulator.hpp>
-#include <actionlib/server/simple_action_server.h>
-#include <control_msgs/FollowJointTrajectoryAction.h>
-
-typedef actionlib::SimpleActionServer<control_msgs::FollowJointTrajectoryAction> Server;
 
 class JointTrajectoryAction;
 
@@ -79,23 +84,23 @@ public:
 
 
     /// Receives Twist messages for the base.
-    ros::Subscriber baseCommandSubscriber;
+    rclcpp::Subscription<geometry_msgs::msg::Twist>::ConstSharedPtr baseCommandSubscriber;
 
 
     /// Publishes Odometry messages
-    ros::Publisher baseOdometryPublisher;
+    rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr baseOdometryPublisher;
 
     /// Publishes JointState messages with angles/velocities for the wheels.
-    ros::Publisher baseJointStatePublisher;
+    rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr baseJointStatePublisher;
 
     /// Service to switch the motor off by setting the PWM value to zero
-    ros::ServiceServer switchOffMotorsService;
+    rclcpp::Service<std_srvs::srv::Empty>::SharedPtr switchOffMotorsService;
 
     /// Service to switch the motor ON by setting the velocity to zero
-    ros::ServiceServer switchONMotorsService;
+    rclcpp::Service<std_srvs::srv::Empty>::SharedPtr switchONMotorsService;
 
     /// Publishes tf frames as odometry
-    tf::TransformBroadcaster odometryBroadcaster;
+    std::shared_ptr<tf2_ros::TransformBroadcaster> odometryBroadcaster;
 
 
 };
@@ -133,29 +138,29 @@ public:
     const static unsigned int RIGHT_FINGER_INDEX = 1;
 
     /// Receives "brics_actuator/JointPositions" for the arm joints
-    ros::Subscriber armPositionCommandSubscriber;
+    rclcpp::Subscription<brics_actuator::msg::JointPositions>::ConstSharedPtr armPositionCommandSubscriber;
 
     /// Receives "brics_actuator/JointVelocities" for the arm joints
-    ros::Subscriber armVelocityCommandSubscriber;
+    rclcpp::Subscription<brics_actuator::msg::JointVelocities>::ConstSharedPtr armVelocityCommandSubscriber;
 
 	/// Implements a "control_msgs/FollowJointTrajectory" action
-	actionlib::ActionServer<control_msgs::FollowJointTrajectoryAction> *armJointTrajectoryAction;
+    rclcpp_action::Server<control_msgs::action::FollowJointTrajectory>::SharedPtr armJointTrajectoryAction;
 
     /// Receives "brics_actuator/JointPositions" for the gripper
-    ros::Subscriber gripperPositionCommandSubscriber;
+    rclcpp::Subscription<brics_actuator::msg::JointPositions>::ConstSharedPtr gripperPositionCommandSubscriber;
 
 
     /// Publishes JointState messages with angles for the arm.
-    ros::Publisher armJointStatePublisher;
+    rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr armJointStatePublisher;
 
     /// Service to switch the motor off by setting the PWM value to zero
-    ros::ServiceServer switchOffMotorsService;
+    rclcpp::Service<std_srvs::srv::Empty>::SharedPtr switchOffMotorsService;
 
     /// Service to switch the motor ON by setting the velocity to zero
-    ros::ServiceServer switchONMotorsService;
+    rclcpp::Service<std_srvs::srv::Empty>::SharedPtr switchONMotorsService;
 
     /// Service to calibrate the arm
-    ros::ServiceServer calibrateService;
+    rclcpp::Service<std_srvs::srv::Empty>::SharedPtr calibrateService;
 
     //Server* trajectoryActionServer;
     //JointTrajectoryAction* jointTrajectoryAction;
@@ -196,9 +201,7 @@ public:
     std::map<std::string, int> armNameToArmIndexMapping;
     
     /// Publishes diagnostic messages
-    ros::Publisher diagnosticArrayPublisher;
-    
-    ros::Publisher dashboardMessagePublisher;
+    rclcpp::Publisher<diagnostic_msgs::msg::DiagnosticArray>::SharedPtr diagnosticArrayPublisher;
 };
 
 

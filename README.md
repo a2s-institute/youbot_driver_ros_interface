@@ -1,3 +1,6 @@
+# Warning
+This code has not been tested on the robot yet. In particular, the changes to the action server to follow joint trajectories has had several changes which need to be carefully tested.
+
 youbot_driver_ros_interface
 ===========================
 

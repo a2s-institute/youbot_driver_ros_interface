@@ -41,9 +41,6 @@
 #include <youbot_trajectory_action_server/joint_trajectory_action.h>
 #include <youbot_trajectory_action_server/joint_state_observer.h>
 
-#include <brics_actuator/JointPositions.h>
-#include <brics_actuator/JointVelocities.h>
-
 #include <kdl/trajectory_composite.hpp>
 #include <kdl/trajectory_segment.hpp>
 #include <kdl/velocityprofile_spline.hpp>
@@ -153,7 +150,7 @@ void JointTrajectoryAction::controlLoop(const std::vector<double>& actualJointAn
                                         const std::vector<double>& actualJointVelocities,
                                         const KDL::Trajectory_Composite* trajectoryComposite,
                                         int numberOfJoints,
-                                        ros::Time startTime,
+                                        rclcpp::Time startTime,
                                         std::vector<double>& velocities)
 {
 
@@ -192,7 +189,7 @@ void JointTrajectoryAction::setTargetTrajectory(double angle1,
     trajectoryComposite.Add(trajectorySegment);
 }
 
-void JointTrajectoryAction::execute(const control_msgs::FollowJointTrajectoryGoalConstPtr& goal, Server* as)
+void JointTrajectoryAction::execute(const std::shared_ptr<FollowJointTrajectory::Goal> &goal, Server as)
 {
 
     current_state.name = goal->trajectory.joint_names;
@@ -248,8 +245,8 @@ void JointTrajectoryAction::execute(const control_msgs::FollowJointTrajectoryGoa
                     startTime,
                     velocities);
 
-        brics_actuator::JointVelocities command;
-        std::vector <brics_actuator::JointValue> armJointVelocities;
+        brics_actuator::msg::JointVelocities command;
+        std::vector <brics_actuator::msg::JointValue> armJointVelocities;
         armJointVelocities.resize(current_state.name.size());
 
         for (uint j = 0; j < numberOfJoints; j++)
@@ -265,12 +262,12 @@ void JointTrajectoryAction::execute(const control_msgs::FollowJointTrajectoryGoa
         ros::Duration(dt).sleep();
     }
 
-    sensor_msgs::JointState goal_state;
+    sensor_msgs::msg::JointState goal_state;
     goal_state.name = goal->trajectory.joint_names;
     goal_state.position = goal->trajectory.points.back().positions;
 
-    brics_actuator::JointPositions command;
-    std::vector <brics_actuator::JointValue> armJointPositions;
+    brics_actuator::msg::JointPositions command;
+    std::vector <brics_actuator::msg::JointValue> armJointPositions;
     armJointPositions.resize(current_state.name.size());
 
     for (uint j = 0; j < numberOfJoints; j++)
@@ -282,12 +279,12 @@ void JointTrajectoryAction::execute(const control_msgs::FollowJointTrajectoryGoa
 
     command.positions = armJointPositions;
     jointStateObserver->updatePosition(command);
-    control_msgs::FollowJointTrajectoryResult result;
-    result.error_code = control_msgs::FollowJointTrajectoryResult::SUCCESSFUL;
+    FollowJointTrajectory::Result result;
+    result.error_code = FollowJointTrajectory::Result::SUCCESSFUL;
     as->setSucceeded(result);
 }
 
-void JointTrajectoryAction::jointStateCallback(const sensor_msgs::JointState& joint_state)
+void JointTrajectoryAction::jointStateCallback(const sensor_msgs::msg::JointState& joint_state)
 {
     int k = current_state.name.size();
 
