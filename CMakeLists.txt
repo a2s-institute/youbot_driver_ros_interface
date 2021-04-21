@@ -123,8 +123,7 @@ ament_target_dependencies(youbot_2nd_arm_test
 )
 target_link_libraries(youbot_2nd_arm_test ${Boost_LIBRARIES} ${youbot_driver_LIBRARIES})
 
-#install(TARGETS youbot_driver_ros_interface youbot_arm_test
-install(TARGETS youbot_2nd_arm_test youbot_arm_test
+install(TARGETS youbot_driver_ros_interface youbot_2nd_arm_test youbot_arm_test
   RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
 
