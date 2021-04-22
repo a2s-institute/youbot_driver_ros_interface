@@ -59,22 +59,22 @@ JointStateObserverOODL::~JointStateObserverOODL()
 
 }
 
-void JointStateObserverOODL::updatePosition(const brics_actuator::JointPositions& positions)
+void JointStateObserverOODL::updatePosition(const brics_actuator::msg::JointPositions& positions)
 {
-    brics_actuator::JointPositionsConstPtr jointPositionsConstPtr(new brics_actuator::JointPositions(positions));
+    brics_actuator::msg::JointPositions::SharedPtr jointPositionsConstPtr(new brics_actuator::msg::JointPositions(positions));
     youBot->armPositionsCommandCallback(jointPositionsConstPtr, youBotArmIndex);
 
 }
 
-void JointStateObserverOODL::updateVelocity(const brics_actuator::JointVelocities& velocities)
+void JointStateObserverOODL::updateVelocity(const brics_actuator::msg::JointVelocities& velocities)
 {
 
-    brics_actuator::JointVelocitiesConstPtr jointVelocitiesConstPtr(new brics_actuator::JointVelocities(velocities));
+    brics_actuator::msg::JointVelocities::SharedPtr jointVelocitiesConstPtr(new brics_actuator::msg::JointVelocities(velocities));
     youBot->armVelocitiesCommandCallback(jointVelocitiesConstPtr, youBotArmIndex);
 
 }
 
-void JointStateObserverOODL::updateTorque(const brics_actuator::JointTorques& torques)
+void JointStateObserverOODL::updateTorque(const brics_actuator::msg::JointTorques& torques)
 {
 
 

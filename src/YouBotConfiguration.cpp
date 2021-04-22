@@ -76,7 +76,6 @@ YouBotBaseConfiguration::~YouBotBaseConfiguration()
 YouBotArmConfiguration::YouBotArmConfiguration()
 {
     youBotArm = 0;
-    armJointTrajectoryAction = 0;
 
     /* provide some default values for the joint names (might be overwritten) */
     jointNames.clear();
@@ -93,11 +92,6 @@ YouBotArmConfiguration::YouBotArmConfiguration()
 
 YouBotArmConfiguration::~YouBotArmConfiguration()
 {
-    // No delete of youBot arm pointer - this class has no ownership 
-    if (armJointTrajectoryAction) {
-		delete armJointTrajectoryAction;
-		armJointTrajectoryAction = 0;
-	}
     jointNames.clear();
 }
 

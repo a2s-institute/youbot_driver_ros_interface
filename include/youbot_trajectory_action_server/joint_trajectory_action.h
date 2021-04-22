@@ -41,36 +41,37 @@
 #ifndef JOINTTRAJECTORYACTION_H
 #define	JOINTTRAJECTORYACTION_H
 
-#include <ros/ros.h>
-#include <control_msgs/FollowJointTrajectoryAction.h>
-#include <sensor_msgs/JointState.h>
-#include <actionlib/server/simple_action_server.h>
-#include <brics_actuator/JointPositions.h>
-#include <brics_actuator/JointVelocities.h>
+#include "rclcpp/rclcpp.hpp"
+#include "rclcpp_action/rclcpp_action.hpp"
+#include <control_msgs/action/follow_joint_trajectory.hpp>
+#include <sensor_msgs/msg/joint_state.hpp>
+#include <brics_actuator/msg/joint_positions.hpp>
+#include <brics_actuator/msg/joint_velocities.hpp>
 
 namespace KDL
 {
 class Trajectory_Composite;
 }
 
-typedef actionlib::SimpleActionServer<control_msgs::FollowJointTrajectoryAction> Server;
+typedef rclcpp_action::Server<control_msgs::action::FollowJointTrajectory>::SharedPtr Server;
 
 class JointStateObserver;
 
 class JointTrajectoryAction
 {
 public:
+    using FollowJointTrajectory = control_msgs::action::FollowJointTrajectory;
     JointTrajectoryAction(JointStateObserver* jointStateObserver);
     JointTrajectoryAction(JointStateObserver* youbot,
                           double velocityGain, double positionGain, double frequency);
     JointTrajectoryAction(const JointTrajectoryAction& orig);
     virtual ~JointTrajectoryAction();
 
-    void execute(const control_msgs::FollowJointTrajectoryGoalConstPtr& goal, Server* as);
+    void execute(const std::shared_ptr<FollowJointTrajectory::Goal> &goal, Server as);
 
-    void jointStateCallback(const sensor_msgs::JointState& joint_state);
-    void jointStateCallback(const brics_actuator::JointPositions& position,
-                            const brics_actuator::JointVelocities& velocity);
+    void jointStateCallback(const sensor_msgs::msg::JointState& joint_state);
+    void jointStateCallback(const brics_actuator::msg::JointPositions& position,
+                            const brics_actuator::msg::JointVelocities& velocity);
 
     void setVelocityGain(double velocityGain);
     double getVelocityGain() const;
@@ -90,7 +91,7 @@ private:
     double positionGain;
     double frequency;
 
-    sensor_msgs::JointState current_state;
+    sensor_msgs::msg::JointState current_state;
     JointStateObserver* jointStateObserver;
 
 private:
@@ -104,7 +105,7 @@ private:
                      const std::vector<double>& actualJointVelocities,
                      const KDL::Trajectory_Composite* trajectoryComposite,
                      int numberOfJoints,
-                     ros::Time startTime,
+                     rclcpp::Time startTime,
                      std::vector<double>& velocities);
 
     void setTargetTrajectory(double angle1,

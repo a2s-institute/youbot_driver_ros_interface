@@ -42,9 +42,9 @@
 
 #include <youbot_trajectory_action_server/joint_state_observer.h>
 
-#include <brics_actuator/JointVelocities.h>
-#include <brics_actuator/JointTorques.h>
-#include <brics_actuator/JointPositions.h>
+#include <brics_actuator/msg/joint_velocities.h>
+#include <brics_actuator/msg/joint_torques.h>
+#include <brics_actuator/msg/joint_positions.h>
 
 namespace youBot
 {
@@ -58,9 +58,9 @@ public:
     JointStateObserverOODL(const JointStateObserverOODL& orig);
     virtual ~JointStateObserverOODL();
 
-    virtual void updatePosition(const brics_actuator::JointPositions& positions);
-    virtual void updateVelocity(const brics_actuator::JointVelocities& velocities);
-    virtual void updateTorque(const brics_actuator::JointTorques& torques);
+    virtual void updatePosition(const brics_actuator::msg::JointPositions& positions);
+    virtual void updateVelocity(const brics_actuator::msg::JointVelocities& velocities);
+    virtual void updateTorque(const brics_actuator::msg::JointTorques& torques);
 
 private:
     YouBotOODLWrapper* youBot;

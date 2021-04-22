@@ -45,47 +45,58 @@ int main(int argc, char **argv)
   	youbot::Logger::toConsole = false;
   	youbot::Logger::toFile = false;
   	youbot::Logger::toROS = true;
-	ros::init(argc, argv, "youbot_oodl_driver");
-	ros::NodeHandle n;
-	youBot::YouBotOODLWrapper youBot(n);
+	rclcpp::init(argc, argv);
+    auto node = rclcpp::Node::make_shared("youbot_oodl_driver");
+	youBot::YouBotOODLWrapper youBot(node);
 	std::vector<std::string> armNames;
 
 
 	/* configuration */
 	bool youBotHasBase;
 	bool youBotHasArms;
-	double youBotDriverCycleFrequencyInHz;	//the driver recives commands and publishes them with a fixed frequency
-	n.param("youBotHasBase", youBotHasBase, true);
-	n.param("youBotHasArms", youBotHasArms, true);
-	n.param("youBotDriverCycleFrequencyInHz", youBotDriverCycleFrequencyInHz, 50.0);
-	n.param<std::string>("youBotConfigurationFilePath", youBot.youBotConfiguration.configurationFilePath, mkstr(YOUBOT_CONFIGURATIONS_DIR));
-	n.param<std::string>("youBotBaseName", youBot.youBotConfiguration.baseConfiguration.baseID, "youbot-base");
+	double youBotDriverCycleFrequencyInHz;	//the driver receives commands and publishes them with a fixed frequency
+    node->declare_parameter<bool>("youBotHasBase", true);
+    node->declare_parameter<bool>("youBotHasArms", true);
+    node->declare_parameter<double>("youBotDriverCycleFrequencyInHz", 50.0);
+    node->declare_parameter<double>("youBotDriverGripperReadingsCycleFrequencyInHz", 5.0);
+    node->declare_parameter<std::string>("youBotConfigurationFilePath", mkstr(YOUBOT_CONFIGURATIONS_DIR));
+    node->declare_parameter<std::string>("youBotBaseName", "youbot-base");
+
+    // TODO
+    node->declare_parameter<std::string>("youBotArmName1", "");
+    node->declare_parameter<std::string>("youBotArmName2", "");
+
+    node->get_parameter("youBotHasBase", youBotHasBase);
+    node->get_parameter("youBotHasArms", youBotHasArms);
+    node->get_parameter("youBotDriverCycleFrequencyInHz", youBotDriverCycleFrequencyInHz);
+    node->get_parameter("youBotConfigurationFilePath", youBot.youBotConfiguration.configurationFilePath);
+    node->get_parameter("youBotBaseName", youBot.youBotConfiguration.baseConfiguration.baseID);
 
 
 	// Retrieve all defined arm names from the launch file params
 	int i = 1;
 	std::stringstream armNameParam;
 	armNameParam << "youBotArmName" << i; // youBotArmName1 is first checked param... then youBotArmName2, etc.
-	while (n.hasParam(armNameParam.str())) {
+	while (node->has_parameter(armNameParam.str())) {
 		std::string armName;
-		n.getParam(armNameParam.str(), armName);
+        node->get_parameter(armNameParam.str(), armName);
 		armNames.push_back(armName);
 		armNameParam.str("");
 		armNameParam << "youBotArmName" <<  (++i);
 	}
 
-    ros::ServiceServer reconnectService = n.advertiseService("reconnect", &youBot::YouBotOODLWrapper::reconnectCallback, &youBot);
+    rclcpp::Service<std_srvs::srv::Empty>::SharedPtr reconnectService = node->create_service<std_srvs::srv::Empty>("reconnect", std::bind(&youBot::YouBotOODLWrapper::reconnectCallback, &youBot, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
-	ROS_INFO("Configuration file path: %s", youBot.youBotConfiguration.configurationFilePath.c_str());
+	RCLCPP_INFO(node->get_logger(), "Configuration file path: %s", youBot.youBotConfiguration.configurationFilePath.c_str());
 	try {
 		youbot::EthercatMaster::getInstance("youbot-ethercat.cfg", youBot.youBotConfiguration.configurationFilePath);
 	} catch (std::exception& e)	{
-		ROS_ERROR("No EtherCAT connection:");
-		ROS_FATAL("%s", e.what());
+		RCLCPP_ERROR(node->get_logger(), "No EtherCAT connection:");
+		RCLCPP_FATAL(node->get_logger(), "%s", e.what());
 		return 0;
 	}
 
-    ROS_ASSERT((youBotHasBase == true) || (youBotHasArms == true)); // At least one should be true, otherwise nothing to be started.
+    assert((youBotHasBase == true) || (youBotHasArms == true)); // At least one should be true, otherwise nothing to be started.
     if (youBotHasBase == true)
     {
         youBot.initializeBase(youBot.youBotConfiguration.baseConfiguration.baseID);
@@ -100,10 +111,10 @@ int main(int argc, char **argv)
  
 
     /* coordination */
-    ros::Rate rate(youBotDriverCycleFrequencyInHz); //Input and output at the same time... (in Hz)
-    while (n.ok())
+    rclcpp::Rate rate(youBotDriverCycleFrequencyInHz); //Input and output at the same time... (in Hz)
+    while (rclcpp::ok())
     {
-        ros::spinOnce();
+        rclcpp::spin_some(node);
         youBot.computeOODLSensorReadings();
         youBot.publishOODLSensorReadings();
         youBot.publishArmAndBaseDiagnostics(2.0);    //publish only every 2 seconds

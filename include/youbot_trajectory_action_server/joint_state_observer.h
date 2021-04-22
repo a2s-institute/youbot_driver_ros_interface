@@ -40,16 +40,16 @@
 #ifndef JOINTSTATEOBSERVER_H
 #define	JOINTSTATEOBSERVER_H
 
-#include <brics_actuator/JointTorques.h>
-#include <brics_actuator/JointVelocities.h>
-#include <brics_actuator/JointPositions.h>
+#include <brics_actuator/msg/joint_torques.hpp>
+#include <brics_actuator/msg/joint_velocities.hpp>
+#include <brics_actuator/msg/joint_positions.hpp>
 
 class JointStateObserver
 {
 public:
-    virtual void updatePosition(const brics_actuator::JointPositions& positions) = 0;
-    virtual void updateVelocity(const brics_actuator::JointVelocities& velocities) = 0;
-    virtual void updateTorque(const brics_actuator::JointTorques& torques) = 0;
+    virtual void updatePosition(const brics_actuator::msg::JointPositions& positions) = 0;
+    virtual void updateVelocity(const brics_actuator::msg::JointVelocities& velocities) = 0;
+    virtual void updateTorque(const brics_actuator::msg::JointTorques& torques) = 0;
 private:
 
 };
