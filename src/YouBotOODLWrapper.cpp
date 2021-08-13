@@ -71,6 +71,7 @@ YouBotOODLWrapper::YouBotOODLWrapper(rclcpp::Node::SharedPtr node) : node(node)
     diagnosticArrayPublisher = node->create_publisher<diagnostic_msgs::msg::DiagnosticArray>("/diagnostics", 1);
 
     last_gripper_readings_time_ = node->now();
+    lastDiagnosticPublishTime = node->now();
 }
 
 YouBotOODLWrapper::~YouBotOODLWrapper()
