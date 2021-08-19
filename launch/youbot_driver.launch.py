@@ -45,7 +45,7 @@ def generate_launch_description():
                 {"youBotBaseName": "youbot-base"},
                 {"youBotArmName1": "youbot-manipulator"}
                 ],
-            remappings=[('/base_joint_states', '/joint_states'),
+            remappings=[('/base/joint_states', '/joint_states'),
                         ('arm_1/joint_states', '/joint_states')]
     )
     return LaunchDescription([
