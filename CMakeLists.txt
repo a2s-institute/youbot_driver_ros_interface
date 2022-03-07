@@ -41,7 +41,7 @@ install(DIRECTORY launch/
 
 option(${PROJECT_NAME}_USE_SETCAP "Set permissions to access ethernet interface without sudo" ON)
 
-set(SUDO_COMMAND gksudo)
+set(SUDO_COMMAND pkexec)
 if($ENV{USE_NORMAL_SUDO})
     set(SUDO_COMMAND sudo)
 endif()
