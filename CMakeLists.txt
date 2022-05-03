@@ -127,9 +127,6 @@ install(TARGETS youbot_driver_ros_interface youbot_2nd_arm_test youbot_arm_test
   RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
 
-# enable python teleop script
-ament_python_install_package(src/examples/)
-
 install(PROGRAMS
     src/examples/youbot_keyboard_teleop.py
     debian/postinst
