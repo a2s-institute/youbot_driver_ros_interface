@@ -37,3 +37,17 @@ Once you launch the driver as root, you may not be able to see the node or topic
 ```
 ros2 launch youbot_driver_ros_interface youbot_driver.launch.py
 ```
+
+### Examples
+
+#### Position testing
+By running the command below, the user will be able to provide angle input to each joints in the youbot manipulator. **Please provide angles within safety limit during testing (Eg: -0.5 to 0.5 rads)**
+```
+ros2 run youbot_driver_ros_interface youbot_arm_test
+```
+#### Velocity testing
+By running the command below, the user will be able to provide velocity input to each joints in the youbot manipulator. **Please provide velocities within safety limit during testing (Eg: -0.2 to 0.2 rads)**
+```
+ros2 run youbot_driver_ros_interface youbot_arm_vel_test
+```
+
