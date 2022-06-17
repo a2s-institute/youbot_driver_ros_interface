@@ -72,7 +72,7 @@ using namespace std::this_thread;
 int main(int argc, char * argv[])
 {
     rclcpp::init(argc, argv);
-    auto node = rclcpp::Node::make_shared("youbot_arm_test");
+    auto node = rclcpp::Node::make_shared("youbot_arm_vel_test");
     auto armPositionsPublisher = node->create_publisher<brics_actuator::msg::JointVelocities> ("arm_1/arm_controller/velocity_command", 1);
     auto gripperPositionPublisher = node->create_publisher<brics_actuator::msg::JointVelocities> ("arm_1/gripper_controller/velocity_command", 1);
 
