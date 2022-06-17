@@ -129,6 +129,8 @@ install(TARGETS youbot_driver_ros_interface youbot_2nd_arm_test youbot_arm_test
 
 install(PROGRAMS
     src/examples/youbot_keyboard_teleop.py
+    src/examples/follow_trajectory_action_client.py
+    src/examples/trajectory.json
     debian/postinst
     DESTINATION lib/${PROJECT_NAME}
 )
