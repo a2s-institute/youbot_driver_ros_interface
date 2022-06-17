@@ -103,6 +103,27 @@ ament_target_dependencies(youbot_arm_test
 )
 target_link_libraries(youbot_arm_test ${Boost_LIBRARIES} ${youbot_driver_LIBRARIES})
 
+add_executable(youbot_arm_vel_test
+    src/examples/youbot_arm_vel_test.cpp
+)
+ament_target_dependencies(youbot_arm_vel_test
+  youbot_driver
+  rclcpp
+  brics_actuator
+  tf2
+  tf2_ros
+  control_msgs
+  diagnostic_msgs
+  geometry_msgs
+  nav_msgs
+  sensor_msgs
+  std_msgs
+  std_srvs
+  trajectory_msgs
+)
+
+target_link_libraries(youbot_arm_vel_test ${Boost_LIBRARIES} ${youbot_driver_LIBRARIES})
+
 add_executable(youbot_2nd_arm_test
 	src/examples/youbot_2nd_arm_test.cpp
 )
@@ -123,12 +144,13 @@ ament_target_dependencies(youbot_2nd_arm_test
 )
 target_link_libraries(youbot_2nd_arm_test ${Boost_LIBRARIES} ${youbot_driver_LIBRARIES})
 
-install(TARGETS youbot_driver_ros_interface youbot_2nd_arm_test youbot_arm_test
+install(TARGETS youbot_driver_ros_interface youbot_2nd_arm_test youbot_arm_test youbot_arm_vel_test
   RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
 
 install(PROGRAMS
     src/examples/youbot_keyboard_teleop.py
+    src/examples/follow_trajectory_action.py
     debian/postinst
     DESTINATION lib/${PROJECT_NAME}
 )
