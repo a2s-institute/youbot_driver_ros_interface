@@ -1,9 +1,11 @@
 /******************************************************************************
 * Copyright (c) 2011
-* Locomotec
+* 
+* B-it bots @Work 
+* Hochschule Bonn-Rhein-Sieg
 *
 * Author:
-* Sebastian Blumenthal
+* Tharun Sethuraman and Vamsi Kalagaturu
 *
 *
 * This software is published under a dual-license: GNU Lesser General Public
@@ -99,7 +101,12 @@ int main(int argc, char * argv[])
 
             jointName.str("");
             jointName << "arm_joint_" << (i + 1);
-
+            if(readValue<=-0.2 && readValue>=0.2);
+            {
+                std::cout << " Joint velocity exceeds the preferrable limit (-0.2 to 0.2)" << std::endl;
+                std::cout << " Setting joint velocity to default value 0.0" << std::endl;
+                readValue=0.0;
+            }
             armJointPositions[i].joint_uri = jointName.str();
             armJointPositions[i].value = readValue;
 
