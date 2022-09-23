@@ -42,7 +42,7 @@
 
 #include <youbot_trajectory_action_server/joint_trajectory_action.h>
 #include <sstream>
-#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 
 namespace youBot
 {
