@@ -80,9 +80,15 @@ int main(int argc, char **argv)
 	while (node->has_parameter(armNameParam.str())) {
 		std::string armName;
         node->get_parameter(armNameParam.str(), armName);
-		armNames.push_back(armName);
-		armNameParam.str("");
-		armNameParam << "youBotArmName" <<  (++i);
+        if (armName != "") {
+            armNames.push_back(armName);
+            armNameParam.str("");
+            armNameParam << "youBotArmName" <<  (++i);
+        }
+        else{
+            armNameParam.str("");
+            armNameParam << "youBotArmName" <<  (++i);
+        }
 	}
 
     rclcpp::Service<std_srvs::srv::Empty>::SharedPtr reconnectService = node->create_service<std_srvs::srv::Empty>("reconnect", std::bind(&youBot::YouBotOODLWrapper::reconnectCallback, &youBot, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
