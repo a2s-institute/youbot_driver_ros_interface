@@ -1,6 +1,3 @@
-# Warning
-This code has not been tested on the robot yet. In particular, the changes to the action server to follow joint trajectories has had several changes which need to be carefully tested.
-
 youbot_driver_ros_interface
 ===========================
 
@@ -51,3 +48,10 @@ By running the command below, the user will be able to provide velocity input to
 ros2 run youbot_driver_ros_interface youbot_arm_vel_test
 ```
 
+#### Follow joint trajectory
+```
+ros2 run youbot_driver_ros_interface follow_trajectory_action_client.py
+```
+
+- The node will execute a `candle` pose trajectory which is stored in the `trajectory.json` file, given the robot is in base position.
+- If you want to give a new trajectory as input, the corresponding trajectory should be captured in the `json` format and stored in the `trajectory.json` file.
