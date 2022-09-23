@@ -24,8 +24,6 @@ class FollowJointTrajectoryActionClient(Node):
 
         self.sub_joint_states = self.create_subscription(JointState, '/joint_states', self.joint_states_callback, 10)
         self.current_joint_state = JointState()
-
-        self.arm_joints = ['arm_joint_1', 'arm_joint_2', 'arm_joint_3', 'arm_joint_4', 'arm_joint_5']
         
         path = get_package_share_directory('youbot_driver_ros_interface')+'/../../lib/youbot_driver_ros_interface/trajectory.json'
 
