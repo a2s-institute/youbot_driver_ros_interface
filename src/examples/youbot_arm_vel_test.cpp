@@ -1,9 +1,11 @@
 /******************************************************************************
 * Copyright (c) 2011
-* Locomotec
+* 
+* B-it bots @Work 
+* Hochschule Bonn-Rhein-Sieg
 *
 * Author:
-* Sebastian Blumenthal
+* Tharun Sethuraman and Vamsi Kalagaturu
 *
 *
 * This software is published under a dual-license: GNU Lesser General Public
@@ -99,32 +101,41 @@ int main(int argc, char * argv[])
 
             jointName.str("");
             jointName << "arm_joint_" << (i + 1);
-
+            if(readValue<-0.2 || readValue>0.2)
+            {
+                std::cout << " Joint velocity exceeds the preferrable limit (-0.2 to 0.2)" << std::endl;
+                std::cout << " Setting joint velocity to default value 0.0" << std::endl;
+                readValue=0.0;
+            }
             armJointPositions[i].joint_uri = jointName.str();
             armJointPositions[i].value = readValue;
 
             armJointPositions[i].unit = boost::units::to_string(boost::units::si::radians_per_second);
-            std::cout << "Joint " << armJointPositions[i].joint_uri << " = " << armJointPositions[i].value << " " << armJointPositions[i].unit << std::endl;
+            // std::cout << "Joint " << armJointPositions[i].joint_uri << " = " << armJointPositions[i].value << " " << armJointPositions[i].unit << std::endl;
 
         }
 
         std::cout << "sending command ..." << std::endl;
-
+        std::cout << "Joint velocities: " << armJointPositions[0].value << " " << armJointPositions[1].value << " " << armJointPositions[2].value << " " << armJointPositions[3].value << " " << armJointPositions[4].value << std::endl;
 
         try {
-
             command.velocities = armJointPositions;
-            armPositionsPublisher->publish(command);
-            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-            
-            armJointPositions[0].value =0;
-            armJointPositions[1].value =0;
-            armJointPositions[2].value =0;
-            armJointPositions[3].value =0;
-            armJointPositions[4].value =0;
-            
-            
+            rclcpp::WallRate loop_rate_vel(50ms); 
+            auto start_time = node -> get_clock() -> now().seconds();
+            RCLCPP_INFO(node->get_logger(), "Publishing: [%f]", start_time);
+            while (node -> get_clock() -> now().seconds() - start_time < 2)
+            {
+                armPositionsPublisher->publish(command);
+                loop_rate_vel.sleep();
+            }
+            RCLCPP_INFO(node->get_logger(), "Publishing ended: [%f]", node -> get_clock() -> now().seconds());
+            // publish 0 velocity to stop the arm
+            for (int i = 0; i < numberOfArmJoints; ++i)
+            {
+                armJointPositions[i].value = 0.0;
+            }
             command.velocities = armJointPositions;
+            RCLCPP_INFO(node->get_logger(), "Publishing 0 velocities");
             armPositionsPublisher->publish(command);
             rclcpp::spin_some(node);
         } catch (const rclcpp::exceptions::RCLError & e) {

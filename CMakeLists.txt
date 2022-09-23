@@ -25,6 +25,7 @@ find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
 find_package(trajectory_msgs REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
 
 find_package(Boost REQUIRED COMPONENTS thread date_time filesystem system)
 
@@ -60,6 +61,7 @@ ament_target_dependencies(youbot_driver_ros_interface
   std_msgs
   std_srvs
   trajectory_msgs
+  tf2_geometry_msgs
 )
 
 target_link_libraries(youbot_driver_ros_interface ${Boost_LIBRARIES})
@@ -150,7 +152,7 @@ install(TARGETS youbot_driver_ros_interface youbot_2nd_arm_test youbot_arm_test 
 
 install(PROGRAMS
     src/examples/youbot_keyboard_teleop.py
-    src/examples/follow_trajectory_action.py
+    # src/examples/follow_trajectory_action.py
     debian/postinst
     DESTINATION lib/${PROJECT_NAME}
 )
