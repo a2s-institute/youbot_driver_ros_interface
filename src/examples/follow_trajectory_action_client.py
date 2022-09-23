@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2022 Bonn-Rhein-Sieg University
+# Author: Vamsi Kalagaturu
 
 import json
 import rclpy
